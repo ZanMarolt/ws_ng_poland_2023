@@ -65,18 +65,24 @@
     </a>
 
     <h3 class="navigation--headline">Genres</h3>
-    <a
-      [attr.data-uf]="'menu-gen-'+genre.id"
-      *ngFor="let genre of genres$ | async;"
-      class="navigation--link"
-      [routerLink]="['/list', 'genre', genre.id]"
-      routerLinkActive="active"
-    >
-      <div class="navigation--menu-item">
-        <fast-svg class="navigation--menu-item-icon" name="genre"></fast-svg>
-        {{ genre.name }}
-      </div>
-    </a>
+      <ng-container *ngIf="!genresLoading(); else: elseTmpl">
+        <a
+        [attr.data-uf]="'menu-gen-'+genre.id"
+        *ngFor="let genre of genres()"
+        class="navigation--link"
+        [routerLink]="['/list', 'genre', genre.id]"
+        routerLinkActive="active"
+      >
+        <div class="navigation--menu-item">
+          <fast-svg class="navigation--menu-item-icon" name="genre"></fast-svg>
+          {{ genre.name }}
+        </div>
+      </a>
+    </ng-container>
+    
+    <ng-template #elseTmpl>
+      <div>Genres loading...</div>
+    </ng-template>
   </nav>
   <div class="menu-footer">
     <a

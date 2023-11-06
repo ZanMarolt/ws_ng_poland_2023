@@ -1,15 +1,16 @@
 import { NavigationEnd, Router, RouterLinkActive, RouterLink } from '@angular/router';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { distinctUntilChanged, filter, map } from 'rxjs';
 import { MovieService } from '../movie/movie.service';
 import { DarkModeToggleComponent } from '../ui/component/dark-mode-toggle/dark-mode-toggle.component';
 import { FormsModule } from '@angular/forms';
 import { SearchBarComponent } from '../ui/component/search-bar/search-bar.component';
 import { HamburgerButtonComponent } from '../ui/component/hamburger-button/hamburger-button.component';
-import { NgFor, AsyncPipe } from '@angular/common';
+import { NgFor, AsyncPipe, CommonModule } from '@angular/common';
 import { FastSvgComponent } from '@push-based/ngx-fast-svg';
 import { SideDrawerComponent } from '../ui/component/side-drawer/side-drawer.component';
 import { DirtyChecksComponent } from '../shared/dirty-checks/dirty-checks.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-shell',
@@ -17,6 +18,7 @@ import { DirtyChecksComponent } from '../shared/dirty-checks/dirty-checks.compon
   styleUrls: ['./app-shell.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     SideDrawerComponent,
     RouterLinkActive,
     RouterLink,
@@ -32,13 +34,14 @@ import { DirtyChecksComponent } from '../shared/dirty-checks/dirty-checks.compon
 })
 export class AppShellComponent implements OnInit {
   sideDrawerOpen = signal<boolean>(false);
+  genresLoading = computed(() => { console.log(this.genres()); return this.genres().length === 0 });
 
   searchValue = signal('');
   setSearchValue(value: string) {
       this.searchValue.set(value);
       this.router.navigate(['search', value]);
   }
-  readonly genres$ = this.movieService.getGenres();
+  readonly genres = toSignal(this.movieService.getGenres(), { initialValue: [] });
 
   constructor(private movieService: MovieService, private router: Router) {}
 
