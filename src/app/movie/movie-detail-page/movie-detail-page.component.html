@@ -1,5 +1,5 @@
 <div class="movie-detail-wrapper">
-  <ui-detail-grid *ngIf="(movie$ | async) as movie; else: loader">
+  <ui-detail-grid *ngIf="movie() as movie; else: loader">
     <div detailGridMedia>
       <img class="aspectRatio-2-3 fit-cover"
            [src]="movie.poster_path | movieImage: 780"

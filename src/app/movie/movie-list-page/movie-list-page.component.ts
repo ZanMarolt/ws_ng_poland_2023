@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   concat,
@@ -14,6 +14,7 @@ import { MovieService } from '../movie.service';
 import { ElementVisibilityDirective } from '../../shared/cdk/element-visibility/element-visibility.directive';
 import { MovieListComponent } from '../movie-list/movie-list.component';
 import { NgIf, AsyncPipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'movie-list-page',
@@ -31,21 +32,28 @@ export class MovieListPageComponent implements OnInit {
   movies$ = this.activatedRoute.params.pipe(switchMap(params => {
     if (params['category']) {
       return this.paginate((page) =>
-        this.movieService.getMovieList(params['category'], page)
+      this.movieService.getMovieList(params['category'], page)
       );
     } else {
       return this.paginate((page) =>
-        this.movieService.getMoviesByGenre(params['id'], page)
+      this.movieService.getMoviesByGenre(params['id'], page)
       );
     }
   }));
+  movies = toSignal(this.movies$, { initialValue: JSON.parse(localStorage.getItem('movies')!) || []});
 
   readonly paginate$ = new Subject<boolean>();
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private movieService: MovieService
-  ) {}
+  ) {
+    effect(() => {
+      if (this.movies()) {
+        localStorage.setItem('movies', JSON.stringify(this.movies()));
+      }
+    })
+  }
 
   ngOnInit() {
 

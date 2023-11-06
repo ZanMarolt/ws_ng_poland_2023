@@ -56,6 +56,14 @@ export class MovieService {
   getMovieById(id: string): Observable<TMDBMovieDetailsModel> {
     return this.httpClient.get<TMDBMovieDetailsModel>(
       `${environment.tmdbBaseUrl}/3/movie/${id}`
+    ).pipe(
+      map((v) => {
+          // movie ID of your choice :) -- Used first "test" movie ID when searching
+        if (id === '226979') {
+          throw new Error('BOOOOMMMMMM!!!!!');
+        }
+        return v;
+      })
     );
   }
 

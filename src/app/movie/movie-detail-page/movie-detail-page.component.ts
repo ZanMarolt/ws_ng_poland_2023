@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of, switchMap } from 'rxjs';
 import { TMDBMovieCreditsModel } from '../../shared/model/movie-credits.model';
 import { TMDBMovieDetailsModel } from '../../shared/model/movie-details.model';
 import { MovieModel } from '../movie-model';
@@ -11,6 +11,7 @@ import { FastSvgComponent } from '@push-based/ngx-fast-svg';
 import { StarRatingComponent } from '../../ui/pattern/star-rating/star-rating.component';
 import { DetailGridComponent } from '../../ui/component/detail-grid/detail-grid.component';
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'movie-detail-page',
@@ -27,18 +28,25 @@ import { CommonModule } from '@angular/common';
     ],
 })
 export class MovieDetailPageComponent implements OnInit {
+  private readonly movieService = inject(MovieService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+
   recommendations$!: Observable<{ results: MovieModel[] }>;
   credits$!: Observable<TMDBMovieCreditsModel>;
-  movie$!: Observable<TMDBMovieDetailsModel>;
+  movie = toSignal(
+    this.activatedRoute.params.pipe(
+      switchMap(({id}) => this.movieService.getMovieById(id)),
+      catchError(() => of(null))
+    ),
+    {
+        initialValue: null // Specify that the developer set it
+    }
+  );
 
-  constructor(
-    private movieService: MovieService,
-    private activatedRoute: ActivatedRoute
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
-      this.movie$ = this.movieService.getMovieById(params['id']);
       this.credits$ = this.movieService.getMovieCredits(params['id']);
       this.recommendations$ = this.movieService.getMovieRecommendations(
         params['id']
