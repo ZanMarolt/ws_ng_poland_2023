@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MovieModel } from '../movie-model';
 import { MovieImagePipe } from '../movie-image.pipe';
 import { NgFor, UpperCasePipe } from '@angular/common';
 import { StarRatingComponent } from '../../ui/pattern/star-rating/star-rating.component';
 import { TiltDirective } from '../../tilt/tilt.directive';
+import { DirtyChecksComponent } from 'src/app/shared/dirty-checks/dirty-checks.component';
 
 @Component({
     selector: 'movie-card',
@@ -16,7 +17,9 @@ import { TiltDirective } from '../../tilt/tilt.directive';
         NgFor,
         UpperCasePipe,
         MovieImagePipe,
+        DirtyChecksComponent
     ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MovieCardComponent implements OnInit {
 

@@ -9,6 +9,7 @@ import { HamburgerButtonComponent } from '../ui/component/hamburger-button/hambu
 import { NgFor, AsyncPipe } from '@angular/common';
 import { FastSvgComponent } from '@push-based/ngx-fast-svg';
 import { SideDrawerComponent } from '../ui/component/side-drawer/side-drawer.component';
+import { DirtyChecksComponent } from '../shared/dirty-checks/dirty-checks.component';
 
 @Component({
   selector: 'app-shell',
@@ -26,6 +27,7 @@ import { SideDrawerComponent } from '../ui/component/side-drawer/side-drawer.com
     FormsModule,
     DarkModeToggleComponent,
     AsyncPipe,
+    DirtyChecksComponent,
   ],
 })
 export class AppShellComponent implements OnInit {
