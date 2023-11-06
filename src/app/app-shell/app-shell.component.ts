@@ -1,5 +1,5 @@
 import { NavigationEnd, Router, RouterLinkActive, RouterLink } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { distinctUntilChanged, filter, map } from 'rxjs';
 import { MovieService } from '../movie/movie.service';
 import { DarkModeToggleComponent } from '../ui/component/dark-mode-toggle/dark-mode-toggle.component';
@@ -31,7 +31,7 @@ import { DirtyChecksComponent } from '../shared/dirty-checks/dirty-checks.compon
   ],
 })
 export class AppShellComponent implements OnInit {
-  sideDrawerOpen = false;
+  sideDrawerOpen = signal<boolean>(false);
 
   private _searchValue = '';
   set searchValue(value: string) {
@@ -48,12 +48,17 @@ export class AppShellComponent implements OnInit {
   ngOnInit() {
     this.router.events
       .pipe(
-        filter((e) => e instanceof NavigationEnd && this.sideDrawerOpen),
+        filter((e) => e instanceof NavigationEnd && this.sideDrawerOpen()),
         map((e) => (e as NavigationEnd).urlAfterRedirects),
         distinctUntilChanged()
       )
       .subscribe(() => {
-        this.sideDrawerOpen = false;
+        this.sideDrawerOpen.set(false);
       });
   }
+
+  toggle(): void {
+    this.sideDrawerOpen.update((currentValue) => !currentValue);
+  }
+
 }
