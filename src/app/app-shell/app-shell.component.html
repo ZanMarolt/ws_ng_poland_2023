@@ -108,7 +108,8 @@
     </ui-hamburger-button>
     <div class="ui-toolbar--widget-container">
       <ui-search-bar
-        [(ngModel)]="searchValue"
+        (ngModelChange)="setSearchValue($event)"
+        [ngModel]="searchValue()"
       ></ui-search-bar>
       <ui-dark-mode-toggle></ui-dark-mode-toggle>
       <fast-svg name="account"></fast-svg>

@@ -33,13 +33,10 @@ import { DirtyChecksComponent } from '../shared/dirty-checks/dirty-checks.compon
 export class AppShellComponent implements OnInit {
   sideDrawerOpen = signal<boolean>(false);
 
-  private _searchValue = '';
-  set searchValue(value: string) {
-    this._searchValue = value;
-    this.router.navigate(['search', value]);
-  }
-  get searchValue(): string {
-    return this._searchValue;
+  searchValue = signal('');
+  setSearchValue(value: string) {
+      this.searchValue.set(value);
+      this.router.navigate(['search', value]);
   }
   readonly genres$ = this.movieService.getGenres();
 
