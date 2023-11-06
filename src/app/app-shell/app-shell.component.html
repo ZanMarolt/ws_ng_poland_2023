@@ -114,7 +114,7 @@
     </ui-hamburger-button>
     <div class="ui-toolbar--widget-container">
       <ui-search-bar
-        (ngModelChange)="setSearchValue($event)"
+        (ngModelChange)="searchValue.set($event)"
         [ngModel]="searchValue()"
       ></ui-search-bar>
       <ui-dark-mode-toggle></ui-dark-mode-toggle>

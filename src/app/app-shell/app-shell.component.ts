@@ -1,5 +1,5 @@
 import { NavigationEnd, Router, RouterLinkActive, RouterLink } from '@angular/router';
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { distinctUntilChanged, filter, map } from 'rxjs';
 import { MovieService } from '../movie/movie.service';
 import { DarkModeToggleComponent } from '../ui/component/dark-mode-toggle/dark-mode-toggle.component';
@@ -33,17 +33,23 @@ import { toSignal } from '@angular/core/rxjs-interop';
   ],
 })
 export class AppShellComponent implements OnInit {
+  private readonly movieService = inject(MovieService);
+  private readonly router = inject(Router);
+
   sideDrawerOpen = signal<boolean>(false);
   genresLoading = computed(() => { console.log(this.genres()); return this.genres().length === 0 });
 
   searchValue = signal('');
-  setSearchValue(value: string) {
-      this.searchValue.set(value);
-      this.router.navigate(['search', value]);
-  }
   readonly genres = toSignal(this.movieService.getGenres(), { initialValue: [] });
 
-  constructor(private movieService: MovieService, private router: Router) {}
+
+  constructor() {
+    effect(() => {
+      if(this.searchValue()) {
+        this.router.navigate(['search', this.searchValue()]);
+      }
+    });
+  }
 
   ngOnInit() {
     this.router.events
