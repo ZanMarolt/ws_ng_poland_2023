@@ -1,5 +1,5 @@
 import { NavigationEnd, Router, RouterLinkActive, RouterLink } from '@angular/router';
-import { Component, Injector, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { distinctUntilChanged, filter, map } from 'rxjs';
 import { MovieService } from '../movie/movie.service';
 import { DarkModeToggleComponent } from '../ui/component/dark-mode-toggle/dark-mode-toggle.component';
@@ -35,7 +35,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class AppShellComponent implements OnInit {
   private readonly movieService = inject(MovieService);
   private readonly router = inject(Router);
-  private readonly injector = inject(Injector);
 
   sideDrawerOpen = signal<boolean>(false);
   genresLoading = computed(() => { console.log(this.genres()); return this.genres().length === 0 });
@@ -45,11 +44,11 @@ export class AppShellComponent implements OnInit {
 
 
   constructor() {
-    // effect(() => {
-    //   if(this.searchValue()) {
-    //     this.router.navigate(['search', this.searchValue()]);
-    //   }
-    // });
+    effect(() => {
+      if(this.searchValue()) {
+        this.router.navigate(['search', this.searchValue()]);
+      }
+    });
   }
 
   ngOnInit() {
@@ -65,12 +64,6 @@ export class AppShellComponent implements OnInit {
   }
 
   toggle(): void {
-    effect(() => {
-      if(this.searchValue()) {
-        this.router.navigate(['search', this.searchValue()]);
-      }
-    }, { injector: this.injector });
-
     this.sideDrawerOpen.update((currentValue) => !currentValue);
   }
 
