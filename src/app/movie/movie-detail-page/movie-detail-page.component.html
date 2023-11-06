@@ -44,7 +44,7 @@
         <h3>The Cast</h3>
         <div class="movie-detail--cast-list">
           <div class="cast-list"
-               *ngIf="(credits$ | async) as credits">
+               *ngIf="credits() as credits">
             <div class="movie-detail--cast-actor"
                  *ngFor="let actor of credits.cast">
               <img
@@ -115,7 +115,7 @@
     <h1>Recommended</h1>
     <h2>Movies</h2>
   </header>
-  <ng-container *ngIf="(recommendations$ | async) as recommendations; else: loader">
+  <ng-container *ngIf="recommendations() as recommendations; else: loader">
 
     <movie-list
       [movies]="recommendations.results"
